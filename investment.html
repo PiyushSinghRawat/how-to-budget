@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>moneybandhu - how to budget</title>
+        <link rel="shortcut icon" href="https://moneybandhu.com/wp-content/uploads/2024/08/cropped-moneybandhu-240x79.png" type="image/x-icon">
+    <style>
+      /* Basic styling for table */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: right;
+      }
+      th {
+        background-color: #f4f4f4;
+      }
+      caption {
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Financial Projection Calculator</h1>
+    <label for="closingBalance">Starting Salary (Closing Balance): </label>
+    <input
+      id="closingBalance"
+      type="number"
+      placeholder="Closing Balance"
+    /><br /><br />
+    <label for="incrementPercent">Increment (%) per Year: </label>
+    <input
+      id="incrementPercent"
+      type="number"
+      placeholder="Increment (%)"
+    /><br /><br />
+    <button id="calculate">Calculate</button>
+
+    <table id="result">
+      <caption>
+        Annual Financial Projection
+      </caption>
+      <thead>
+        <tr>
+          <th>Year</th>
+          <th>Starting Salary</th>
+          <th>Increment</th>
+          <th>Ending Salary</th>
+          <th>Needs per month</th>
+          <th>Wants per month</th>
+          <th>Investments per month</th>
+          <th>Needs % per month</th>
+          <th>Wants % per month</th>
+          <th>Investments % per month</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <!-- Data will be inserted here by JavaScript -->
+      </tbody>
+    </table>
+
+    <script>
+      document.getElementById("calculate").addEventListener("click", () => {
+        let closingBalance = parseFloat(
+          document.getElementById("closingBalance").value
+        );
+        let incrementPercent = parseFloat(
+          document.getElementById("incrementPercent").value / 100
+        );
+        let needs = ((50 / 100) * closingBalance) / 12;
+        let wants = ((30 / 100) * closingBalance) / 12;
+        let investments = ((20 / 100) * closingBalance) / 12;
+
+        let tbody = document.getElementById("tbody");
+tbody.innerHTML=''
+        if (
+          isNaN(closingBalance) ||
+          isNaN(incrementPercent) ||
+          closingBalance <= 0 ||
+          incrementPercent <= 0
+        ) {
+          alert(
+            "Please enter valid positive numbers for starting salary and increment percentage."
+          );
+          return;
+        }
+  
+
+        // for the first year
+        let row = document.createElement("tr");
+        row.innerHTML = `
+          <td>1</td>
+          <td>--</td>
+          <td>--</td>
+          <td>rs ${Math.round(closingBalance)}</td>
+          <td>rs ${Math.round(needs)}</td>
+          <td>rs ${Math.round(wants)}</td>
+          <td>rs ${Math.round(investments)}</td>
+          <td>${50}%</td>
+          <td>${30}%</td>
+          <td>${20}%</td>
+        `;
+        tbody.append(row);
+        // for the rest years
+        for (let i = 2; i <= 11; i++) {
+          let openingBalance = closingBalance;
+          let increment = openingBalance * incrementPercent;
+          needs = needs + (increment * (20 / 100)) / 12;
+          wants = needs + (wants * (30 / 100)) / 12;
+          investments = investments + (increment * (50 / 100)) / 12;
+          closingBalance = openingBalance + increment;
+
+          let needsPercent = (needs * 12) / closingBalance;
+          let wantssPercent = (needs * 12) / closingBalance;
+          let investmentsPercent = (needs * 12) / closingBalance;
+          let row = document.createElement("tr");
+          row.innerHTML = `
+          <td>${i}</td>
+          <td>${Math.round(openingBalance)}</td>
+          <td>${Math.round(increment)}</td>
+          <td>rs ${Math.round(closingBalance)}</td>
+          <td>rs ${Math.round(needs)}</td>
+          <td>rs ${Math.round(wants)}</td>
+          <td>rs ${Math.round(investments)}</td>
+          <td>${Math.round(needsPercent * 100)}%</td>
+          <td>${Math.round(wantssPercent * 100)}%</td>
+          <td>${Math.round(investmentsPercent * 100)}%</td>
+        `;
+          tbody.append(row);
+        }
+      });
+    </script>
+  </body>
+</html>
